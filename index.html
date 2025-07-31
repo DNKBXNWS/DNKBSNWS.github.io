@@ -3,419 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>主页</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* 加载动画 */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0c29;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        
-        .loader.hidden {
-            opacity: 0;
-            transform: translateY(-100%);
-            pointer-events: none;
-        }
-        
-        .loader-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #4cc9f0;
-            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-            margin-bottom: 20px;
-        }
-        
-        .loader-text {
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            color: #e5e5e5;
-            text-transform: uppercase;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        /* 主容器 */
-        .container {
-            text-align: center;
-            max-width: 1200px;
-            width: 100%;
-            padding: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s forwards 0.5s;
-        }
-        
-        /* 标题样式 */
-        .title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 4rem;
-            background: linear-gradient(90deg, #4cc9f0, #f72585);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-            display: inline-block;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #4cc9f0, #f72585);
-            border-radius: 2px;
-            transform: scaleX(0);
-            transform-origin: left;
-            animation: lineGrow 1s forwards 1s;
-        }
-        
-        /* 按钮网格布局 */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* 亚克力质感按钮 */
-        .acrylic-btn {
-            position: relative;
-            padding: 30px 20px;
-            border-radius: 24px;
-            font-size: 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            touch-action: manipulation;
-        }
-        
-        .acrylic-btn:hover, .acrylic-btn:active {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.12);
-        }
-        
-        .acrylic-btn:active {
-            transform: translateY(-4px) scale(1.01);
-            transition: all 0.1s ease;
-        }
-        
-        .acrylic-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, 
-                rgba(76, 201, 240, 0.15) 0%, 
-                rgba(114, 9, 183, 0.15) 50%, 
-                rgba(247, 37, 133, 0.15) 100%);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .acrylic-btn:hover::before {
-            opacity: 1;
-        }
-        
-        .btn-icon {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            color: #4cc9f0;
-            transition: transform 0.3s ease;
-        }
-        
-        .acrylic-btn:hover .btn-icon {
-            transform: scale(1.15);
-        }
-        
-        .btn-text {
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            font-weight: 500;
-        }
-        
-        /* 装饰元素 */
-        .decoration {
-            position: absolute;
-            z-index: -1;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        
-        .circle-1 {
-            width: 300px;
-            height: 300px;
-            background: #4361ee;
-            top: 10%;
-            left: 10%;
-            animation: float 12s ease-in-out infinite;
-        }
-        
-        .circle-2 {
-            width: 250px;
-            height: 250px;
-            background: #f72585;
-            bottom: 15%;
-            right: 15%;
-            animation: float 14s ease-in-out infinite reverse;
-        }
-        
-        .circle-3 {
-            width: 200px;
-            height: 200px;
-            background: #4cc9f0;
-            top: 40%;
-            right: 20%;
-            animation: float 10s ease-in-out infinite;
-        }
-        
-        /* 动画定义 */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+    <title>我的网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#6B7280',
+                        light: '#F9FAFB',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
             }
         }
-        
-        @keyframes lineGrow {
-            to { transform: scaleX(1); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(20px, 20px) rotate(5deg); }
-            50% { transform: translate(0, 40px) rotate(0deg); }
-            75% { transform: translate(-20px, 20px) rotate(-5deg); }
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .button-grid {
-                grid-template-columns: 1fr;
-                max-width: 500px;
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
             }
-            
-            .title {
-                font-size: 2.8rem;
-                margin-bottom: 3rem;
+            .acrylic {
+                @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
             }
-            
-            .acrylic-btn {
-                min-height: 170px;
-                padding: 25px 20px;
+            .btn-hover {
+                @apply transform transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95;
             }
-        }
-        
-        @media (max-width: 480px) {
-            .title {
-                font-size: 2.2rem;
-                margin-bottom: 2.5rem;
+            .loader-animation {
+                animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
-            
-            .acrylic-btn {
-                min-height: 150px;
-                padding: 22px 18px;
-                border-radius: 20px;
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
             }
-            
-            .btn-icon {
-                font-size: 2.2rem;
+            .fade-in {
+                animation: fadeIn 0.8s ease-out forwards;
             }
-            
-            .btn-text {
-                font-size: 1.1rem;
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
-            
-            body {
-                padding: 15px;
-            }
-            
-            .container {
-                padding: 1.5rem;
-            }
-        }
-        
-        /* 触摸设备优化 */
-        @media (hover: none) {
-            .acrylic-btn {
-                min-height: 160px;
-                padding: 25px;
-            }
-            
-            .acrylic-btn:active {
-                transform: translateY(-4px) scale(1.01);
-                background: rgba(255, 255, 255, 0.15);
-            }
-        }
-        
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #4cc9f0, #f72585);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(to bottom, #3aa0c0, #c51e6d);
         }
     </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col">
     <!-- 加载动画 -->
-    <div class="loader">
-        <div class="loader-circle"></div>
-        <div class="loader-text">载入中</div>
-    </div>
-    
-    <!-- 装饰元素 -->
-    <div class="decoration circle-1"></div>
-    <div class="decoration circle-2"></div>
-    <div class="decoration circle-3"></div>
-    
-    <!-- 主要内容 -->
-    <div class="container">
-        <h1 class="title">主页</h1>
-        
-        <div class="button-grid">
-            <a href="jisuanqi.html" class="acrylic-btn">
-                <i class="fas fa-calculator btn-icon"></i>
-                <span class="btn-text">计算器</span>
-            </a>
-            <a href="lanpingmoniqi.html" class="acrylic-btn">
-                <i class="fas fa-skull btn-icon"></i>
-                <span class="btn-text">蓝屏模拟器</span>
-            </a>
-            <div class="acrylic-btn">
-                <i class="fas fa-palette btn-icon"></i>
-                <span class="btn-text">按钮三</span>
-            </div>
-            <div class="acrylic-btn">
-                <i class="fas fa-cogs btn-icon"></i>
-                <span class="btn-text">按钮四</span>
-            </div>
+    <div id="loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+        <div class="loader-animation text-primary text-5xl">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
         </div>
     </div>
-    
-    <script>
-        // 页面加载完成后隐藏加载动画
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.querySelector('.loader').classList.add('hidden');
-            }, 1200);
-        });
+
+    <!-- 主内容 -->
+    <main class="flex-1 flex flex-col items-center justify-center p-6 opacity-0" id="mainContent">
+        <!-- 标题 -->
+        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark mb-12 fade-in" style="animation-delay: 0.2s;">我的工具集</h1>
         
-        // 按钮交互效果
-        document.querySelectorAll('.acrylic-btn').forEach(button => {
-            // 鼠标/触摸交互
-            button.addEventListener('mousedown', () => {
-                button.style.transform = 'translateY(-4px) scale(1.01)';
-            });
+        <!-- 按钮网格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-md w-full">
+            <!-- 按钮一：计算器 -->
+            <a href="jisuanqi.html" class="acrylic rounded-2xl p-6 flex flex-col items-center justify-center btn-hover fade-in" style="animation-delay: 0.4s;">
+                <i class="fa fa-calculator text-4xl text-primary mb-4"></i>
+                <span class="text-xl font-medium text-dark">计算器</span>
+            </a>
             
-            button.addEventListener('mouseup', () => {
-                button.style.transform = 'translateY(-8px) scale(1.03)';
-            });
+            <!-- 按钮二：蓝屏模拟器 -->
+            <a href="lanpingmoniqi.html" class="acrylic rounded-2xl p-6 flex flex-col items-center justify-center btn-hover fade-in" style="animation-delay: 0.6s;">
+                <i class="fa fa-desktop text-4xl text-primary mb-4"></i>
+                <span class="text-xl font-medium text-dark">蓝屏模拟器</span>
+            </a>
             
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = '';
-            });
+            <!-- 按钮三：画图 -->
+            <a href="huatu.html" class="acrylic rounded-2xl p-6 flex flex-col items-center justify-center btn-hover fade-in" style="animation-delay: 0.8s;">
+                <i class="fa fa-paint-brush text-4xl text-primary mb-4"></i>
+                <span class="text-xl font-medium text-dark">画图</span>
+            </a>
             
-            // 触摸设备支持
-            button.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                button.style.transform = 'translateY(-4px) scale(1.01)';
-                button.style.background = 'rgba(255, 255, 255, 0.15)';
-            }, { passive: false });
-            
-            button.addEventListener('touchend', () => {
-                button.style.transform = '';
-                button.style.background = 'rgba(255, 255, 255, 0.08)';
-            });
-            
-            // 鼠标移动光效
-            button.addEventListener('mousemove', e => {
-                const rect = button.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+            <!-- 按钮四：更多 -->
+            <a href="more.html" class="acrylic rounded-2xl p-6 flex flex-col items-center justify-center btn-hover fade-in" style="animation-delay: 1s;">
+                <i class="fa fa-ellipsis-h text-4xl text-primary mb-4"></i>
+                <span class="text-xl font-medium text-dark">更多</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-4 text-center text-gray-500 text-sm fade-in" style="animation-delay: 1.2s;">
+        <p>© 2023 我的工具集</p>
+    </footer>
+
+    <script>
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟加载过程
+            setTimeout(function() {
+                const loader = document.getElementById('loader');
+                loader.classList.add('fade-out');
                 
-                button.style.setProperty('--x', `${x}px`);
-                button.style.setProperty('--y', `${y}px`);
-            });
+                // 隐藏加载动画
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                    // 显示主内容
+                    document.getElementById('mainContent').style.opacity = '1';
+                }, 500);
+            }, 1200);
         });
     </script>
 </body>
