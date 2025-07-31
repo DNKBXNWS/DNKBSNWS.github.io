@@ -1,0 +1,197 @@
+|<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全警报 - 诈骗带货拦截</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+        }
+        
+        body {
+            background-color: #fff;
+            color: #333;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #c00;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .alert-section {
+            margin-bottom: 40px;
+        }
+        
+        .alert-section h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #c00;
+        }
+        
+        .alert-content p {
+            margin-bottom: 15px;
+        }
+        
+        .risk-section {
+            margin-bottom: 30px;
+        }
+        
+        .risk-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .risk-list {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .risk-list li {
+            margin-bottom: 10px;
+        }
+        
+        .recommendations {
+            margin-bottom: 30px;
+        }
+        
+        .recommendations h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .recommendations ul {
+            margin-left: 25px;
+        }
+        
+        .recommendations li {
+            margin-bottom: 10px;
+        }
+        
+        .actions {
+            margin-bottom: 40px;
+        }
+        
+        .actions h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .action-list {
+            margin-left: 25px;
+        }
+        
+        .action-list li {
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .contact-info {
+            margin-top: 15px;
+        }
+        
+        .timestamp {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        .highlight {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>【高危安全警报】诈骗带货行为拦截</h1>
+            <p>联通安全管理 · 网络安全监测系统</p>
+        </div>
+        
+        <div class="alert-section">
+            <h2>检测到高风险诈骗行为</h2>
+            <div class="alert-content">
+                <p>您的访问已被网络运营商拦截。检测到的带货链接已被确认为高风险诈骗行为，继续操作可能导致财产损失。</p>
+                <p>通过实时分析，已发现以下欺诈特征：</p>
+            </div>
+        </div>
+        
+        <div class="risk-section">
+            <h3>检测到的诈骗特征：</h3>
+            <ul class="risk-list">
+                <li><span class="highlight">虚假宣传：</span>商品存在功效夸大、虚构用户评价、使用虚假数据等欺诈行为</li>
+                <li><span class="highlight">价格欺诈：</span>商品价格远高于市场正常水平，存在价格欺诈嫌疑</li>
+                <li><span class="highlight">账号异常：</span>卖家账号存在异常行为，已被多次举报</li>
+                <li><span class="highlight">支付风险：</span>支付通道存在安全隐患，可能导致资金损失</li>
+                <li><span class="highlight">来源不明：</span>商品缺乏正规厂商授权和资质证明</li>
+            </ul>
+            <p>根据国家反诈中心2025年数据统计，类似骗局已造成超过<span class="highlight">1.6亿元</span>的经济损失。此链接已被<span class="highlight">49名用户</span>举报，安全风险评级为<span class="highlight">严重</span>。</p>
+        </div>
+        
+        <div class="recommendations">
+            <h3>安全购物建议：</h3>
+            <ul>
+                <li>在交易前核实商家的营业执照、联系方式和实际地址</li>
+                <li>警惕"限时优惠"、"最后机会"等制造紧迫感的话术</li>
+                <li>拒绝直接转账、扫码支付等无保障支付方式</li>
+                <li>通过正规平台交易，避免私下交易</li>
+                <li>对于价格异常优惠的商品保持高度警惕</li>
+            </ul>
+        </div>
+        
+        <div class="actions">
+            <h3>请立即采取以下安全措施：</h3>
+            <ul class="action-list">
+                <li>立即终止当前交易操作</li>
+                <li>不要提供任何个人信息或支付凭证</li>
+                <li>通过官方渠道举报此诈骗链接</li>
+                <li>安装官方反诈APP增强防护能力</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 国家反诈中心 | 公安部网络安全保卫局</p>
+            <div class="contact-info">
+                <p>反诈专线: 96110</p>
+                <p>举报邮箱: report@cyberpolice.cn</p>
+                <p>官方网站: www.cyberpolice.cn</p>
+            </div>
+            <div class="timestamp">
+                <p> </p>
+                <p> </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
