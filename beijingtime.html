@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京时间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+        
+        .back-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+        }
+        
+        .time-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 50px 30px;
+            margin: 30px 20px;
+        }
+        
+        .title {
+            color: #666;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        
+        .time-display {
+            font-size: 64px;
+            font-weight: 300;
+            color: #333;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+        }
+        
+        .date-display {
+            color: #888;
+            font-size: 20px;
+            font-weight: 400;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 40px;
+            padding: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .time-display {
+                font-size: 48px;
+            }
+            
+            .date-display {
+                font-size: 18px;
+            }
+            
+            .back-btn {
+                top: 20px;
+                left: 20px;
+                width: 44px;
+                height: 44px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .time-display {
+                font-size: 36px;
+            }
+            
+            .date-display {
+                font-size: 16px;
+            }
+            
+            .title {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+    
+    <div class="container">
+        <div class="time-card">
+            <div class="title">当前北京时间</div>
+            <div id="time" class="time-display">00:00:00</div>
+            <div id="date" class="date-display">2023年1月1日 星期一</div>
+        </div>
+        <div class="footer">精确时间同步 · 每秒自动更新</div>
+    </div>
+
+    <script>
+        // 返回按钮功能
+        function goBack() {
+            window.location.href = 'more.html';
+        }
+        
+        // 更新时间函数
+        function updateTime() {
+            const now = new Date();
+            
+            // 获取北京时间（UTC+8）
+            const beijingTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * 8));
+            
+            // 格式化时间
+            const hours = String(beijingTime.getHours()).padStart(2, '0');
+            const minutes = String(beijingTime.getMinutes()).padStart(2, '0');
+            const seconds = String(beijingTime.getSeconds()).padStart(2, '0');
+            
+            // 格式化日期
+            const year = beijingTime.getFullYear();
+            const month = beijingTime.getMonth() + 1;
+            const day = beijingTime.getDate();
+            
+            // 星期数组
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[beijingTime.getDay()];
+            
+            // 更新DOM元素
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('date').textContent = `${year}年${month}月${day}日 ${weekday}`;
+        }
+        
+        // 初始化并每秒更新时间
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 添加加载完成后的微交互
+        window.addEventListener('load', function() {
+            document.body.style.opacity = 1;
+        });
+    </script>
+</body>
+</html>
