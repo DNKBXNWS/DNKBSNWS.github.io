@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈基米加密工具</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #4a6fa5;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            border-color: #4a6fa5;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .encrypt-btn {
+            background: linear-gradient(45deg, #4a6fa5, #6c8ec6);
+            color: white;
+        }
+        
+        .decrypt-btn {
+            background: linear-gradient(45deg, #5a9c76, #7dbb95);
+            color: white;
+        }
+        
+        .copy-btn {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            min-height: 60px;
+            border: 1px dashed #dee2e6;
+            word-break: break-all;
+        }
+        
+        @media (max-width: 600px) {
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>哈基米加密工具</h1>
+        
+        <div class="input-group">
+            <label for="plainText">输入明文：</label>
+            <textarea id="plainText" placeholder="请输入要加密的文字..."></textarea>
+            <div class="btn-group">
+                <button class="encrypt-btn" onclick="encryptText()">加密</button>
+                <button class="copy-btn" onclick="copyPlainText()">复制</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="cipherText">加密结果：</label>
+            <div class="result-box" id="cipherResult"></div>
+            <div class="btn-group">
+                <button class="copy-btn" onclick="copyCipherText()">复制结果</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="cipherText">输入密文：</label>
+            <textarea id="cipherText" placeholder="请输入要解密的哈基米文字..."></textarea>
+            <div class="btn-group">
+                <button class="decrypt-btn" onclick="decryptText()">解密</button>
+                <button class="copy-btn" onclick="copyCipherInput()">复制</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="cipherText">解密结果：</label>
+            <div class="result-box" id="plainResult"></div>
+            <div class="btn-group">
+                <button class="copy-btn" onclick="copyPlainResult()">复制结果</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 加密字符映射
+        const charMap = ['哈', '基', '米', '南', '北', '绿', '豆', '好', '呀', '裤', '大', '狗', '叫'];
+        
+        // 更安全的Base64编码函数
+        function safeBtoa(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, 
+                function(match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                })
+            );
+        }
+        
+        // 更安全的Base64解码函数
+        function safeAtob(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+        
+        // 加密文本
+        function encryptText() {
+            const plainText = document.getElementById('plainText').value;
+            if (!plainText.trim()) {
+                alert('请输入要加密的内容');
+                return;
+            }
+            
+            try {
+                // 使用安全的Base64编码
+                const base64Text = safeBtoa(plainText);
+                
+                // 转换为哈基米字符
+                let cipherText = '';
+                for (let i = 0; i < base64Text.length; i++) {
+                    const charCode = base64Text.charCodeAt(i);
+                    // 每个字符拆分成两个4位的数
+                    const high = (charCode >> 4) & 0x0F;
+                    const low = charCode & 0x0F;
+                    
+                    // 使用映射字符
+                    cipherText += charMap[high % charMap.length] + charMap[low % charMap.length];
+                }
+                
+                document.getElementById('cipherResult').textContent = cipherText;
+                document.getElementById('cipherText').value = cipherText;
+            } catch (e) {
+                alert('加密过程中发生错误: ' + e.message);
+            }
+        }
+        
+        // 解密文本
+        function decryptText() {
+            const cipherText = document.getElementById('cipherText').value;
+            if (!cipherText.trim()) {
+                alert('请输入要解密的密文');
+                return;
+            }
+            
+            // 检查输入长度是否为偶数
+            if (cipherText.length % 2 !== 0) {
+                alert('密文长度不正确，应为偶数');
+                return;
+            }
+            
+            try {
+                let base64Text = '';
+                for (let i = 0; i < cipherText.length; i += 2) {
+                    const char1 = cipherText[i];
+                    const char2 = cipherText[i + 1];
+                    
+                    const index1 = charMap.indexOf(char1);
+                    const index2 = charMap.indexOf(char2);
+                    
+                    if (index1 === -1 || index2 === -1) {
+                        throw new Error(`包含无效字符: ${char1}${char2}`);
+                    }
+                    
+                    // 将两个4位数组合成原始字节
+                    const charCode = (index1 << 4) | index2;
+                    base64Text += String.fromCharCode(charCode);
+                }
+                
+                // 使用安全的Base64解码
+                const plainText = safeAtob(base64Text);
+                document.getElementById('plainResult').textContent = plainText;
+            } catch (e) {
+                alert('解密失败: ' + e.message);
+            }
+        }
+        
+        // 更安全的复制功能
+        function copyPlainText() {
+            copyToClipboard(document.getElementById('plainText').value);
+        }
+        
+        function copyCipherText() {
+            copyToClipboard(document.getElementById('cipherResult').textContent);
+        }
+        
+        function copyCipherInput() {
+            copyToClipboard(document.getElementById('cipherText').value);
+        }
+        
+        function copyPlainResult() {
+            copyToClipboard(document.getElementById('plainResult').textContent);
+        }
+        
+        function copyToClipboard(text) {
+            if (!text) {
+                alert('没有内容可复制');
+                return;
+            }
+            
+            // 创建临时textarea元素
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';  // 防止页面滚动
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                // 执行复制命令
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('已复制到剪贴板');
+                } else {
+                    throw new Error('复制命令失败');
+                }
+            } catch (err) {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动选择文本复制');
+            } finally {
+                // 移除临时元素
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
