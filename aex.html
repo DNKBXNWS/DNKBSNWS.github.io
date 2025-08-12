@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全对称文本加密解密工具</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f9f9f9, #eef2f7);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+            margin: 30px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 17px;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .security-info {
+            background-color: #e8f4fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .security-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .security-info ul {
+            padding-left: 25px;
+        }
+        
+        .security-info li {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        
+        .input-group {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #34495e;
+            font-size: 17px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+        
+        .key-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        #secretKey {
+            flex: 1;
+        }
+        
+        #generateKeyBtn {
+            padding: 14px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        #generateKeyBtn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .key-info {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .key-info i {
+            color: #e74c3c;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        #encryptBtn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        #encryptBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        #decryptBtn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        #decryptBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        #resetBtn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+        }
+        
+        #resetBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+        }
+        
+        .result-container {
+            margin-top: 35px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .result-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .copy-btn {
+            background: #9b59b6;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            min-height: 120px;
+            word-break: break-all;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border: 1px dashed #dce1e6;
+            font-size: 15px;
+            line-height: 1.7;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+            font-size: 16px;
+        }
+        
+        .success {
+            background-color: #d5f5e3;
+            color: #27ae60;
+            display: block;
+        }
+        
+        .error {
+            background-color: #fadbd8;
+            color: #c0392b;
+            display: block;
+        }
+        
+        .algorithm-info {
+            display: flex;
+            gap: 25px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .algorithm-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            flex: 1;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+            transition: transform 0.3s;
+        }
+        
+        .algorithm-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .algorithm-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .algorithm-card p {
+            color: #7f8c8d;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .key-container {
+                flex-direction: column;
+            }
+            
+            #generateKeyBtn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>安全对称文本加密解密工具</h1>
+            <p class="description">使用真正的AES-GCM加密算法和LZ77压缩，只有完全相同的32位密钥才能解密成功</p>
+        </div>
+        
+        <div class="security-info">
+            <h3>🔒 安全增强说明</h3>
+            <ul>
+                <li>修复了之前版本中密钥不匹配也能解密的问题</li>
+                <li>现在使用真正的AES-GCM 256位加密算法</li>
+                <li>使用PBKDF2密钥派生算法增强密钥安全性</li>
+                <li>每次加密生成随机盐和初始化向量(IV)</li>
+                <li>只有完全相同的密钥才能成功解密</li>
+            </ul>
+        </div>
+        
+        <div class="input-group">
+            <label for="secretKey">32位数字密钥</label>
+            <div class="key-container">
+                <input type="text" id="secretKey" placeholder="输入32位数字密钥（例如：12345678901234567890123456789012）" maxlength="32">
+                <button id="generateKeyBtn">生成随机密钥</button>
+            </div>
+            <div class="key-info">
+                <span>⚠️ 双方必须使用完全相同的密钥才能解密成功</span>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="inputText">输入文本</label>
+            <textarea id="inputText" placeholder="输入需要加密或解密的文本"></textarea>
+        </div>
+        
+        <div class="btn-group">
+            <button id="encryptBtn">🔐 加密文本</button>
+            <button id="decryptBtn">🔓 解密文本</button>
+            <button id="resetBtn">🔄 重置所有</button>
+        </div>
+        
+        <div class="algorithm-info">
+            <div class="algorithm-card">
+                <h3>🔐 AES-GCM 256加密</h3>
+                <p>使用高级加密标准 (AES) 256位密钥，Galois/Counter Mode (GCM) 提供高安全性和完整性验证。每个加密操作使用随机盐和初始化向量(IV)。</p>
+            </div>
+            <div class="algorithm-card">
+                <h3>📦 LZ77 压缩算法</h3>
+                <p>在加密前使用LZ77算法压缩文本，显著减少加密输出长度，提高传输效率，同时保持数据完整性。</p>
+            </div>
+            <div class="algorithm-card">
+                <h3>🔑 PBKDF2 密钥派生</h3>
+                <p>使用PBKDF2算法从用户密钥派生加密密钥，增加暴力破解难度，提供更强的安全性保护。</p>
+            </div>
+        </div>
+        
+        <div class="result-container">
+            <div class="result-header">
+                <h2>处理结果</h2>
+                <div class="result-actions">
+                    <button class="copy-btn" id="copyBtn">📋 复制结果</button>
+                </div>
+            </div>
+            <div class="result" id="result">加密或解密结果将显示在这里...</div>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="footer">
+            <p>安全对称文本加密工具 | 使用AES-GCM 256位加密 | 修复密钥验证问题</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const secretKeyInput = document.getElementById('secretKey');
+            const inputText = document.getElementById('inputText');
+            const resultDiv = document.getElementById('result');
+            const encryptBtn = document.getElementById('encryptBtn');
+            const decryptBtn = document.getElementById('decryptBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const generateKeyBtn = document.getElementById('generateKeyBtn');
+            const statusDiv = document.getElementById('status');
+            
+            // 初始化时生成随机密钥
+            generateRandomKey();
+            
+            // 生成随机密钥
+            function generateRandomKey() {
+                const randomKey = Array.from({length: 32}, () => Math.floor(Math.random() * 10)).join('');
+                secretKeyInput.value = randomKey;
+                showStatus('已生成新的32位随机密钥', 'success');
+            }
+            
+            // 生成随机密钥按钮事件
+            generateKeyBtn.addEventListener('click', generateRandomKey);
+            
+            // 加密按钮事件
+            encryptBtn.addEventListener('click', async function() {
+                const key = secretKeyInput.value;
+                const text = inputText.value;
+                
+                if (!validateKey(key)) {
+                    showStatus('错误：密钥必须是32位数字', 'error');
+                    return;
+                }
+                
+                if (!text) {
+                    showStatus('错误：请输入需要加密的文本', 'error');
+                    return;
+                }
+                
+                try {
+                    // 压缩文本
+                    const compressedText = lz77Compress(text);
+                    
+                    // 加密文本
+                    const encryptedText = await encryptText(compressedText, key);
+                    
+                    // 显示结果
+                    resultDiv.textContent = encryptedText;
+                    showStatus('文本加密成功！密钥不同将无法解密此内容', 'success');
+                } catch (error) {
+                    showStatus('加密失败: ' + error.message, 'error');
+                    resultDiv.textContent = '加密过程中发生错误';
+                }
+            });
+            
+            // 解密按钮事件
+            decryptBtn.addEventListener('click', async function() {
+                const key = secretKeyInput.value;
+                const text = inputText.value;
+                
+                if (!validateKey(key)) {
+                    showStatus('错误：密钥必须是32位数字', 'error');
+                    return;
+                }
+                
+                if (!text) {
+                    showStatus('错误：请输入需要解密的文本', 'error');
+                    return;
+                }
+                
+                try {
+                    // 解密文本
+                    const decryptedText = await decryptText(text, key);
+                    
+                    // 解压缩文本
+                    const decompressedText = lz77Decompress(decryptedText);
+                    
+                    // 显示结果
+                    resultDiv.textContent = decompressedText;
+                    showStatus('文本解密成功！', 'success');
+                } catch (error) {
+                    if (error.message.includes('decryption failed')) {
+                        showStatus('解密失败：密钥不正确或加密内容已损坏', 'error');
+                        resultDiv.textContent = '解密失败 - 请检查密钥是否正确';
+                    } else {
+                        showStatus('解密失败: ' + error.message, 'error');
+                        resultDiv.textContent = '解密过程中发生错误';
+                    }
+                }
+            });
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', function() {
+                secretKeyInput.value = '';
+                inputText.value = '';
+                resultDiv.textContent = '加密或解密结果将显示在这里...';
+                statusDiv.style.display = 'none';
+                generateRandomKey();
+                showStatus('已重置所有内容并生成新密钥', 'success');
+            });
+            
+            // 复制按钮事件
+            copyBtn.addEventListener('click', function() {
+                const textToCopy = resultDiv.textContent;
+                if (textToCopy && textToCopy !== '加密或解密结果将显示在这里...') {
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => showStatus('结果已复制到剪贴板！', 'success'))
+                        .catch(() => showStatus('复制失败，请手动复制', 'error'));
+                } else {
+                    showStatus('没有内容可复制', 'error');
+                }
+            });
+            
+            // 密钥验证
+            function validateKey(key) {
+                return /^\d{32}$/.test(key);
+            }
+            
+            // 显示状态消息
+            function showStatus(message, type) {
+                statusDiv.textContent = message;
+                statusDiv.className = 'status ' + type;
+            }
+            
+            // LZ77压缩算法实现
+            function lz77Compress(input) {
+                let output = '';
+                let pos = 0;
+                const windowSize = 2048;
+                
+                while (pos < input.length) {
+                    let bestMatch = { offset: 0, length: 0 };
+                    
+                    // 在滑动窗口中寻找最长匹配
+                    const start = Math.max(0, pos - windowSize);
+                    for (let i = start; i < pos; i++) {
+                        let len = 0;
+                        while (len < 258 && pos + len < input.length && 
+                               input[i + len] === input[pos + len]) {
+                            len++;
+                        }
+                        
+                        if (len > bestMatch.length) {
+                            bestMatch = { offset: pos - i, length: len };
+                        }
+                    }
+                    
+                    // 如果有合适的匹配
+                    if (bestMatch.length > 3) {
+                        output += `[${bestMatch.offset},${bestMatch.length}]`;
+                        pos += bestMatch.length;
+                    } else {
+                        // 转义特殊字符
+                        if (input[pos] === '[' || input[pos] === ']' || input[pos] === '\\') {
+                            output += '\\' + input[pos];
+                        } else {
+                            output += input[pos];
+                        }
+                        pos++;
+                    }
+                }
+                
+                return output;
+            }
+            
+            // LZ77解压缩算法实现
+            function lz77Decompress(input) {
+                let output = '';
+                let pos = 0;
+                
+                while (pos < input.length) {
+                    if (input[pos] === '[') {
+                        // 处理匹配标记
+                        const end = input.indexOf(']', pos);
+                        if (end === -1) {
+                            output += input[pos];
+                            pos++;
+                            continue;
+                        }
+                        
+                        const parts = input.slice(pos + 1, end).split(',');
+                        if (parts.length !== 2) {
+                            output += input[pos];
+                            pos++;
+                            continue;
+                        }
+                        
+                        const offset = parseInt(parts[0], 10);
+                        const length = parseInt(parts[1], 10);
+                        
+                        if (isNaN(offset) || isNaN(length) || offset > output.length || offset <= 0) {
+                            output += input[pos];
+                            pos++;
+                            continue;
+                        }
+                        
+                        // 复制匹配内容
+                        const start = output.length - offset;
+                        for (let i = 0; i < length; i++) {
+                            if (start + i < output.length) {
+                                output += output[start + i];
+                            }
+                        }
+                        
+                        pos = end + 1;
+                    } else if (input[pos] === '\\' && pos + 1 < input.length) {
+                        // 处理转义字符
+                        output += input[pos + 1];
+                        pos += 2;
+                    } else {
+                        output += input[pos];
+                        pos++;
+                    }
+                }
+                
+                return output;
+            }
+            
+            // 使用Web Crypto API的真正加密函数
+            async function encryptText(text, password) {
+                // 将文本编码为ArrayBuffer
+                const encoder = new TextEncoder();
+                const data = encoder.encode(text);
+                
+                // 生成随机盐（16字节）
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                
+                // 使用PBKDF2派生密钥
+                const keyMaterial = await window.crypto.subtle.importKey(
+                    "raw",
+                    encoder.encode(password),
+                    {name: "PBKDF2"},
+                    false,
+                    ["deriveBits", "deriveKey"]
+                );
+                
+                const key = await window.crypto.subtle.deriveKey(
+                    {
+                        "name": "PBKDF2",
+                        salt: salt,
+                        "iterations": 100000,
+                        "hash": "SHA-256"
+                    },
+                    keyMaterial,
+                    { "name": "AES-GCM", "length": 256 },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+                
+                // 生成随机IV（12字节）
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                
+                // 加密数据
+                const encryptedData = await window.crypto.subtle.encrypt(
+                    {
+                        name: "AES-GCM",
+                        iv: iv
+                    },
+                    key,
+                    data
+                );
+                
+                // 组合盐、IV和加密数据
+                const combined = new Uint8Array(salt.length + iv.length + encryptedData.byteLength);
+                combined.set(salt);
+                combined.set(iv, salt.length);
+                combined.set(new Uint8Array(encryptedData), salt.length + iv.length);
+                
+                // 转换为Base64字符串
+                return btoa(String.fromCharCode(...combined));
+            }
+            
+            // 使用Web Crypto API的真正解密函数
+            async function decryptText(encryptedText, password) {
+                try {
+                    // 将Base64字符串转换为Uint8Array
+                    const binaryString = atob(encryptedText);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    
+                    // 提取盐、IV和加密数据
+                    const salt = bytes.slice(0, 16);
+                    const iv = bytes.slice(16, 28);
+                    const encryptedData = bytes.slice(28);
+                    
+                    // 使用PBKDF2派生密钥
+                    const encoder = new TextEncoder();
+                    const keyMaterial = await window.crypto.subtle.importKey(
+                        "raw",
+                        encoder.encode(password),
+                        {name: "PBKDF2"},
+                        false,
+                        ["deriveBits", "deriveKey"]
+                    );
+                    
+                    const key = await window.crypto.subtle.deriveKey(
+                        {
+                            "name": "PBKDF2",
+                            salt: salt,
+                            "iterations": 100000,
+                            "hash": "SHA-256"
+                        },
+                        keyMaterial,
+                        { "name": "AES-GCM", "length": 256 },
+                        true,
+                        ["encrypt", "decrypt"]
+                    );
+                    
+                    // 解密数据
+                    const decryptedData = await window.crypto.subtle.decrypt(
+                        {
+                            name: "AES-GCM",
+                            iv: iv
+                        },
+                        key,
+                        encryptedData
+                    );
+                    
+                    // 将ArrayBuffer转换为字符串
+                    const decoder = new TextDecoder();
+                    return decoder.decode(decryptedData);
+                } catch (error) {
+                    // 特别处理解密失败的情况
+                    if (error.toString().includes('decryption failed')) {
+                        throw new Error('decryption failed - 密钥不正确或加密内容已损坏');
+                    }
+                    throw error;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
